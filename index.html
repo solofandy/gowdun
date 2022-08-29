@@ -1,0 +1,152 @@
+<head>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #101F30;
+        }
+
+        #cards {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        #cards td {
+            height:160px;
+            width: 220px;
+            padding: 0;
+            margin: 0;
+            background-size: cover;
+        }
+
+        #cards td .sec {
+            background-color: #66A9C9;
+            height: 100%;
+            width: 100%;
+        }
+
+
+        #cards td.card1 {
+            background-image: url(card1.jpg);
+        }
+
+        #cards td.card2 {
+            background-image: url(card2.jpg);
+        }
+
+        #cards td.card3 {
+            background-image: url(card3.jpg);
+        }
+
+        #cards td.card4 {
+            background-image: url(card4.jpg);
+        }
+
+        #cards td.card5 {
+            background-image: url(card5.jpg);
+        }
+
+        #cards td.card6 {
+            background-image: url(card6.jpg);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <table id="cards">
+        <tr>
+            <td id="c1">
+                <div class="sec"></div>
+            </td>
+            <td id="c2">
+                <div class="sec"></div>
+            </td>
+            <td id="c3">
+                <div class="sec"></div>
+            </td>
+        </tr>
+        <tr>
+            <td id="c4">
+                <div class="sec"></div>
+            </td>
+            <td id="c5">
+                <div class="sec"></div>
+            </td>
+            <td id="c6">
+                <div class="sec"></div>
+            </td>
+        </tr>
+
+    </table>
+
+    <script>
+
+        const R = (range) => {
+            const  buf = new Uint8Array(4);
+            window.crypto.getRandomValues(buf);
+            const r = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
+            return ((r % range) + range) % range;
+        }
+
+        // Fisher Yates shuffle ?
+        const shuffle = (array) => {
+            let currentIndex = array.length,  randomIndex;
+
+            // While there remain elements to shuffle.
+            while (currentIndex != 0) {
+
+                // Pick a remaining element.
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        const generate = () => {
+            let cards = [];
+            const day = (new Date().getTime() / (1000 * 3600 * 24)) | 0;
+            const p = localStorage.getItem("cards");
+            if (!!p) {
+                cards = JSON.parse(p)[day];
+            }
+
+            if (!!!cards || cards.length == 0) {
+                cards = shuffle([1, 2, 3, 4, 5, 6]);
+                const x = {};
+                x[day] = cards;
+                localStorage.setItem("cards", JSON.stringify(x));
+            }
+            for (let i = 1; i <= 6; i++) {
+                const dom = document.getElementById(`c${i}`);
+                dom.className =`card${cards[i - 1]}`;
+                // dom.innerText = `${cards[i - 1]}`;
+            }
+        }
+
+        const main = () => {
+            generate();
+            const banners = document.getElementsByClassName("sec");
+            for (const banner of banners) {
+                banner.addEventListener("click", (e) => {
+                    setTimeout(() => {
+                        banner.className = "";
+                    }, 100)
+                })
+            }
+            
+
+        }
+
+        main();
+
+    </script>
+</body>
